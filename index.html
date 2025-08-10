@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Roblox Server Joiner - PSXS</title>
+    <meta name="description" content="Join specific Roblox servers using Place ID and Game Instance ID">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            max-width: 500px;
+            width: 100%;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .status {
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            font-weight: bold;
+        }
+        .loading {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #3498db;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .footer {
+            margin-top: 30px;
+            font-size: 12px;
+            color: #666;
+        }
+    </style>
+    <script>
+        window.onload = function() {
+            const params = new URLSearchParams(window.location.search);
+            const placeId = params.get('placeId');
+            const gameInstanceId = params.get('gameInstanceId');
+
+            const statusDiv = document.getElementById('status');
+            const messageDiv = document.getElementById('message');
+
+            if (placeId && gameInstanceId) {
+                // Show loading state
+                statusDiv.className = 'status loading';
+                messageDiv.innerHTML = `
+                    <div class="spinner"></div>
+                    <strong>Joining Roblox Server...</strong><br>
+                    Place ID: ${placeId}<br>
+                    Instance ID: ${gameInstanceId.substring(0, 8)}...
+                `;
+
+                // Attempt to launch Roblox
+                setTimeout(() => {
+                    try {
+                        window.location.href = `roblox://placeID=${placeId}&gameInstanceId=${gameInstanceId}`;
+                        
+                        // Show success message after attempting to launch
+                        setTimeout(() => {
+                            statusDiv.className = 'status success';
+                            messageDiv.innerHTML = `
+                                <strong>✓ Launch Attempted!</strong><br>
+                                If Roblox didn't open automatically, make sure you have Roblox installed.<br>
+                                <small>Place ID: ${placeId}</small>
+                            `;
+                        }, 1000);
+                    } catch (error) {
+                        showError('Failed to launch Roblox. Please make sure Roblox is installed.');
+                    }
+                }, 500);
+            } else {
+                showError('Missing Place ID or Game Instance ID in URL parameters.');
+            }
+        };
+
+        function showError(message) {
+            const statusDiv = document.getElementById('status');
+            const messageDiv = document.getElementById('message');
+            
+            statusDiv.className = 'status error';
+            messageDiv.innerHTML = `<strong>❌ Error:</strong><br>${message}`;
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>🎮 Roblox Server Joiner</h1>
+        <p>Automatically joining your Roblox server...</p>
+        
+        <div id="status" class="status loading">
+            <div id="message">
+                <div class="spinner"></div>
+                <strong>Initializing...</strong>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>PSXS Roblox Tools</p>
+            <p><small>This page helps you join specific Roblox servers using direct links.</small></p>
+        </div>
+    </div>
+</body>
+</html>
